@@ -52,14 +52,24 @@ class TaskUpdate(BaseModel):
     title: str
     done: bool
 
-@app.get("/")
-def root():
-    return {
-        "name": "Task API",
-        "version": "1.0",
-        "endpoints": ["/tasks"]
-    }
+@app.get("/tasks")
+def task_list():
 
+    cursor.execute("SELECT * FROM tasks")
+
+    rows = cursor.fetchall()
+
+    tasks = []
+
+    for row in rows:
+
+        tasks.append({
+            "id": row[0],
+            "title": row[1],
+            "done": bool(row[2])
+        })
+
+    return tasks
 
 @app.get("/health")
 def health():
@@ -68,21 +78,29 @@ def health():
     }
 
 
-@app.get("/tasks")
-def task_list():
-    return tasks
-
 
 @app.get("/tasks/{id}")
 def get_task(id: int):
-    for task in tasks:
-        if task["id"] == id:
-            return task
 
-    raise HTTPException(
-        status_code=404,
-        detail=f"Task {id} not found"
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (id,)
     )
+
+    row = cursor.fetchone()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Task {id} not found"
+        )
+
+    return {
+        "id": row[0],
+        "title": row[1],
+        "done": bool(row[2])
+    }
+
 
 
 @app.post("/tasks", status_code=201)
