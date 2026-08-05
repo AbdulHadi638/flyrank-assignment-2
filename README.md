@@ -111,9 +111,8 @@ SELECT * FROM tasks;
 
 ```markdown
 ![Database Screenshot](db_screenshot.png)
-```
 
----
+```
 
 
 
