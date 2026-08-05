@@ -106,13 +106,9 @@ SELECT * FROM tasks;
 
 ---
 
-## Database Viewer Screenshot
+## Database Screenshot
 
-
-```markdown
 ![Database Screenshot](db_screenshot.png)
-
-```
 
 
 
