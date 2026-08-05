@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import sqlite3
 
 app = FastAPI()
-connection =sqlite3.connect("tasks.db")
+connection = sqlite3.connect("tasks.db", check_same_thread=False)
 cursor=connection.cursor()
 tasks = [
     {
@@ -21,7 +21,9 @@ tasks = [
         "title": "Push to GitHub",
         "done": True
     }
+
 ]
+print(tasks)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS tasks(
     id INTEGER PRIMARY KEY,
@@ -35,12 +37,9 @@ count = cursor.fetchone()[0]
 
 if count == 0:
 
-    for task in tasks:
-
-        cursor.execute(
-            "INSERT INTO tasks (id, title, done) VALUES (?, ?, ?)",
-            (task["id"], task["title"], task["done"])
-        )
+    cursor.execute("INSERT INTO tasks (id, title, done) VALUES (1, 'Learn FastAPI', 0)")
+    cursor.execute("INSERT INTO tasks (id, title, done) VALUES (2, 'Build Task API', 0)")
+    cursor.execute("INSERT INTO tasks (id, title, done) VALUES (3, 'Push to GitHub', 1)")
 
     connection.commit()
 
