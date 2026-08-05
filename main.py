@@ -70,11 +70,7 @@ def task_list():
 
     return tasks
 
-@app.get("/health")
-def health():
-    return {
-        "status": "ok"
-    }
+
 
 
 
@@ -110,18 +106,22 @@ def create_task(task: TaskCreate):
             status_code=400,
             detail="Title cannot be empty"
         )
+    cursor.execute(
+    "INSERT INTO tasks (title, done) VALUES (?, ?)",
+    (task.title, False)
+)
 
-    new_id = len(tasks) + 1
+    connection.commit()
 
-    new_task = {
+    new_id = cursor.lastrowid
+
+    return {
         "id": new_id,
         "title": task.title,
         "done": False
-    }
+    }  
 
-    tasks.append(new_task)
-
-    return new_task
+    
 @app.put("/tasks/{id}")
 def update_task(id: int, updated_task: TaskUpdate):
 
